@@ -1,0 +1,16 @@
+{
+  "short_name": "AAROHAN",
+  "name": "AAROHAN Disaster Relocation Portal",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#002B49",
+  "theme_color": "#002B49",
+  "display": "standalone",
+  "orientation": "portrait"
+}
