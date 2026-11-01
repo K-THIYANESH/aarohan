@@ -26,7 +26,32 @@ export default function SiteLandRecords({ showBanner }) {
       setSite(response.data);
     } catch (err) {
       console.error('Error fetching site land records:', err);
-      if (showBanner) showBanner('Failed to load site land records.', 'error');
+      if (showBanner) showBanner('Failed to load site — showing demo data.', 'error');
+      // Fallback demo data so page never goes blank
+      setSite({
+        id: parseInt(siteId) || 1,
+        name: "Kalpetta Model Relocation Township",
+        district: "Wayanad",
+        state: "Kerala",
+        linked_village_name: "Chooralmala Settlement",
+        capacity_families: 480,
+        rank_label: "Rank #1 — Highest Suitability",
+        ahp_score_summary: "Site scores highest on safety, infrastructure proximity, and government land availability.",
+        ahp_breakdown: [
+          { criterion: "Slope Safety", weight: "0.35", score: "0.90", meaning: "Gentle gradient, no landslide risk" },
+          { criterion: "Distance to Road", weight: "0.25", score: "0.85", meaning: "Within 2km of NH-766" },
+          { criterion: "Water Availability", weight: "0.20", score: "0.80", meaning: "PWS connection feasible" },
+          { criterion: "Land Ownership", weight: "0.20", score: "0.95", meaning: "100% Government Land" }
+        ],
+        site_hazard_score: 0.12,
+        verification_status: "IN_PROGRESS",
+        pending_days: 9,
+        survey_records: [
+          { id: 1, site_id: parseInt(siteId) || 1, survey_number: "SY 145/2A", recorded_owner: "Kerala Govt – Revenue Dept", ownership_status: "GOVERNMENT_LAND", acquisition_status: "ACQUIRED", notes: "Verified", last_verified_by: null, last_verified_at: null },
+          { id: 2, site_id: parseInt(siteId) || 1, survey_number: "SY 146/1B", recorded_owner: "Kerala Forest Dept", ownership_status: "UNKNOWN", acquisition_status: "IN_PROGRESS", notes: "", last_verified_by: null, last_verified_at: null },
+          { id: 3, site_id: parseInt(siteId) || 1, survey_number: "SY 147/3C", recorded_owner: "Kerala Govt – Revenue Dept", ownership_status: "GOVERNMENT_LAND", acquisition_status: "ACQUIRED", notes: "Verified", last_verified_by: null, last_verified_at: null }
+        ]
+      });
     } finally {
       setLoading(false);
     }
@@ -154,7 +179,7 @@ export default function SiteLandRecords({ showBanner }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {site.ahp_breakdown.map((row, idx) => (
+              {(site.ahp_breakdown || []).map((row, idx) => (
                 <tr key={idx}>
                   <td className="p-2 border font-bold text-gray-900">{row.criterion}</td>
                   <td className="p-2 border text-center font-mono">{row.weight}</td>

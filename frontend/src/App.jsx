@@ -53,7 +53,11 @@ function MainPortal() {
     return <Login showBanner={showBanner} />;
   }
 
-  const userRole = user.role === 'FIELD_OFFICER' ? 'Field Officer' : 'Revenue Officer';
+  const userRole = user.role === 'FIELD_OFFICER' 
+    ? 'Field Officer' 
+    : user.name?.includes('Disaster') 
+      ? 'Disaster Officer' 
+      : 'Revenue Officer';
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F0F4F9] text-[#1A1A1A] font-sans antialiased">

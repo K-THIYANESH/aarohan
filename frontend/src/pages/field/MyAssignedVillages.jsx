@@ -98,7 +98,7 @@ export default function MyAssignedVillages({ showBanner }) {
                   <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     {v.visit_status === 'REPORT_SUBMITTED' ? (
                       <button
-                        onClick={() => navigate('/field/reports')}
+                        onClick={() => navigate(`/field/reports?village_id=${v.id}`)}
                         className="px-3 py-1.5 border border-[#138808] text-[#138808] font-bold text-xs rounded hover:bg-emerald-50"
                       >
                         View Submitted Report

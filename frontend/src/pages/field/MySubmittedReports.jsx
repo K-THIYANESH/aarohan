@@ -2,19 +2,27 @@ import React, { useState, useEffect } from 'react';
 import api from '../../api/axios';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { CheckSquare, WifiOff } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 export default function MySubmittedReports({ showBanner }) {
   const [reports, setReports] = useState([]);
+  const [villages, setVillages] = useState([]);
   const [pendingSync, setPendingSync] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedReport, setSelectedReport] = useState(null);
+  const [searchParams] = useSearchParams();
+  const highlightVillageId = searchParams.get('village_id') ? parseInt(searchParams.get('village_id')) : null;
 
   useEffect(() => {
     const fetchReports = async () => {
       setLoading(true);
       try {
-        const response = await api.get('/field/reports');
-        setReports(response.data);
+        const [rRes, vRes] = await Promise.all([
+          api.get('/field/reports'),
+          api.get('/field/villages')
+        ]);
+        setReports(rRes.data);
+        setVillages(vRes.data);
         const offline = JSON.parse(localStorage.getItem('aarohan_pending_sync_reports') || '[]');
         setPendingSync(offline);
       } catch (err) {
@@ -53,7 +61,7 @@ export default function MySubmittedReports({ showBanner }) {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-100 border-b border-gray-300 text-xs font-bold text-gray-700 uppercase tracking-wider">
-                <th className="py-3.5 px-4">Village ID / Name</th>
+                <th className="py-3.5 px-4">Village</th>
                 <th className="py-3.5 px-4">Visit Date</th>
                 <th className="py-3.5 px-4">Recommendation Given</th>
                 <th className="py-3.5 px-4">Submission Status</th>
@@ -75,24 +83,42 @@ export default function MySubmittedReports({ showBanner }) {
               ))}
 
               {/* Render online synced reports */}
-              {reports.map((rep) => (
-                <tr
-                  key={rep.id}
-                  onClick={() => setSelectedReport(rep)}
-                  className="hover:bg-gray-50 cursor-pointer transition-colors"
-                >
-                  <td className="py-3.5 px-4 font-bold text-[#000080]">
-                    Village ID #{rep.village_id}
-                  </td>
-                  <td className="py-3.5 px-4 text-xs font-mono text-gray-700">{rep.visit_date}</td>
-                  <td className="py-3.5 px-4 font-bold text-gray-800">{rep.field_officer_recommendation}</td>
-                  <td className="py-3.5 px-4">
-                    <span className="px-2.5 py-1 bg-[#138808] text-white text-xs font-bold rounded-full">
-                      Submitted
-                    </span>
+              {reports.length === 0 && pendingSync.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-10 text-center text-gray-500 text-sm font-semibold">
+                    No reports submitted yet.
                   </td>
                 </tr>
-              ))}
+              ) : null}
+              {reports.map((rep) => {
+                const villageName = villages.find(v => v.id === rep.village_id)?.name;
+                const isHighlighted = highlightVillageId && rep.village_id === highlightVillageId;
+                return (
+                  <tr
+                    key={rep.id}
+                    onClick={() => setSelectedReport(rep)}
+                    className={`cursor-pointer transition-colors ${
+                      isHighlighted
+                        ? 'bg-emerald-50 border-l-4 border-[#138808] hover:bg-emerald-100'
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <td className="py-3.5 px-4 font-bold text-[#000080]">
+                      {villageName || `Village ID #${rep.village_id}`}
+                      {isHighlighted && (
+                        <span className="ml-2 px-1.5 py-0.5 bg-[#138808] text-white text-[10px] font-bold rounded">← This Report</span>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4 text-xs font-mono text-gray-700">{rep.visit_date}</td>
+                    <td className="py-3.5 px-4 font-bold text-gray-800">{rep.field_officer_recommendation}</td>
+                    <td className="py-3.5 px-4">
+                      <span className="px-2.5 py-1 bg-[#138808] text-white text-xs font-bold rounded-full">
+                        Submitted
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
@@ -103,7 +129,7 @@ export default function MySubmittedReports({ showBanner }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-lg w-full shadow-2xl space-y-3 border border-gray-300 text-xs">
             <h3 className="text-base font-bold text-[#000080] border-b pb-2">
-              Submitted Report Record #{selectedReport.id}
+              Submitted Report — {villages.find(v => v.id === selectedReport.village_id)?.name || `Village ID #${selectedReport.village_id}`}
             </h3>
             <p><strong>Inspector:</strong> {selectedReport.submitted_by}</p>
             <p><strong>Visit Date:</strong> {selectedReport.visit_date} (GPS: {selectedReport.gps_coordinates})</p>

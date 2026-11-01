@@ -35,6 +35,7 @@ export default function MasterCaseFilesList({ showBanner }) {
             district: "Wayanad",
             state: "Kerala",
             hazard_level: "HIGH",
+            risk_label: "Very High Risk",
             hazard_score: 8.9,
             current_stage_index: 3,
             visit_status: "REPORT_SUBMITTED",
@@ -47,6 +48,7 @@ export default function MasterCaseFilesList({ showBanner }) {
             district: "Wayanad",
             state: "Kerala",
             hazard_level: "CRITICAL",
+            risk_label: "Immediate Danger",
             hazard_score: 9.4,
             current_stage_index: 4,
             visit_status: "REPORT_SUBMITTED",
@@ -59,6 +61,7 @@ export default function MasterCaseFilesList({ showBanner }) {
             district: "Wayanad",
             state: "Kerala",
             hazard_level: "HIGH",
+            risk_label: "High Risk",
             hazard_score: 8.2,
             current_stage_index: 2,
             visit_status: "PENDING",
@@ -164,11 +167,11 @@ export default function MasterCaseFilesList({ showBanner }) {
                 <div className="bg-[#102548] text-white p-3 flex justify-between items-center text-xs">
                   <span className="font-mono font-bold text-[#E8C547]">#ARH-{v.id.toString().padStart(4, '0')}</span>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                    v.risk_label.includes('Very High') || v.risk_label.includes('Immediate') 
+                    (v.risk_label || '').includes('Very High') || (v.risk_label || '').includes('Immediate') 
                       ? 'bg-red-600 text-white' 
                       : 'bg-amber-500 text-slate-900'
                   }`}>
-                    {v.risk_label}
+                    {v.risk_label || 'High Risk'}
                   </span>
                 </div>
 
