@@ -73,7 +73,9 @@ export default function StrategicPlanningHub() {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch(`http://127.0.0.1:8008${endpoint}`, {
+      const apiBase = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : '/api';
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+      const res = await fetch(`${apiBase}${cleanEndpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

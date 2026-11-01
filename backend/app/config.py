@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     DEMO_COLLECTOR_PHONE: str = "+919876543210"
     ENVIRONMENT: str = "development"
     LOG_LEVEL: str = "INFO"
+    ALLOWED_ORIGINS: str = ""
 
     class Config:
         env_file = ".env"

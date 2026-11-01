@@ -1,7 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
 @import "tailwindcss";
 
 /* Central Government of India Institutional Design Tokens & Global Styles */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
 
 :root {
   /* Primary Institutional Palette */

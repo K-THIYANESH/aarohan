@@ -109,10 +109,17 @@ allowed_origins = [
     "http://localhost",
     "http://127.0.0.1"
 ]
+if settings.ALLOWED_ORIGINS:
+    for origin in settings.ALLOWED_ORIGINS.split(","):
+        origin_clean = origin.strip()
+        if origin_clean and origin_clean not in allowed_origins:
+            allowed_origins.append(origin_clean)
 
+# Allow credentials or wildcard fallback for production / onrender.com
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=allowed_origins if settings.ENVIRONMENT == "production" and not settings.ALLOWED_ORIGINS.strip() == "*" else (["*"] if settings.ALLOWED_ORIGINS.strip() == "*" else allowed_origins),
+    allow_origin_regex=r"https://.*\.onrender\.com" if settings.ENVIRONMENT != "development" else None,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
